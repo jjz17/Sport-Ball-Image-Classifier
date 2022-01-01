@@ -39,9 +39,9 @@ for i in df.index:
     print(url)
     file_path = ''
     if label == 'Basketball':
-        file_path = 'sport_ball_images/basketball/'
+        file_path = f'sport_ball_images{os.path.sep}basketball{os.path.sep}'
     else:
-        file_path = 'sport_ball_images/soccer/'
+        file_path = f'sport_ball_images{os.path.sep}soccer{os.path.sep}'
     try:
         url_to_jpg(i+1, url, file_path)
         print(f'Saving image {i+1}')
