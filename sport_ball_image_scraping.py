@@ -2,14 +2,11 @@
 
 # IMPORTS
 
-import pandas as pd
 import urllib.request as urllib
-from bs4 import BeautifulSoup
 
-import os
-import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
+from bs4 import BeautifulSoup
 
 sns.set_style('darkgrid')
 sns.set_palette(sns.diverging_palette(220, 20, n=7))
