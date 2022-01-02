@@ -10,8 +10,8 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
 
-# sport_balls_data_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/sport_ball_images.zip'
-# data_dir = tf.keras.utils.get_file('dataset', sport_balls_data_url, extract=True)
+sport_balls_data_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/sport_ball_images.zip'
+data_dir = tf.keras.utils.get_file('images', sport_balls_data_url, extract=True)
 # data_dir = pathlib.Path(data_dir)
 data_dir = pathlib.Path('/Users/jasonzhang/.keras/datasets/sport_ball_images')
 
@@ -24,6 +24,11 @@ type(data_dir)
 
 image_count = len(list(data_dir.glob('*/*.jpg')))
 print(image_count)
+
+basketball_count = len(list(data_dir.glob('basketball/*.jpg')))
+print(f'# of basketballs {basketball_count}')
+soccer_count = len(list(data_dir.glob('soccer/*.jpg')))
+print(f'# of soccerballs {soccer_count}')
 
 # Here are some roses:
 
@@ -102,6 +107,8 @@ for images, labels in train_ds.take(1):
     plt.imshow(images[i].numpy().astype("uint8"))
     plt.title(class_names[labels[i]])
     plt.axis("off")
+
+plt.show()
 
 #%% md
 
@@ -295,6 +302,8 @@ for images, _ in train_ds.take(1):
     ax = plt.subplot(3, 3, i + 1)
     plt.imshow(augmented_images[0].numpy().astype("uint8"))
     plt.axis("off")
+
+plt.show()
 
 #%% md
 
