@@ -8,6 +8,10 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
+
+sport_balls_data_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/sport_ball_images.zip'
+
+
 import pathlib
 dataset_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
 data_dir = tf.keras.utils.get_file('flower_photos', origin=dataset_url, untar=True)
