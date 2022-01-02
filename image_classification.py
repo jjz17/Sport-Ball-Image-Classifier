@@ -403,11 +403,45 @@ plt.show()
 
 #%%
 
-sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
-sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
+# sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
+# sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
+
+basketball_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/basketball.jpg'
+basketball_path = tf.keras.utils.get_file('basketball', origin=basketball_url)
+
+soccerball_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/soccerball.jpg'
+soccerball_path = tf.keras.utils.get_file('soccerball', origin=soccerball_url)
+
+# img = tf.keras.utils.load_img(
+#     sunflower_path, target_size=(img_height, img_width)
+# )
+# img_array = tf.keras.utils.img_to_array(img)
+# img_array = tf.expand_dims(img_array, 0) # Create a batch
+#
+# predictions = model.predict(img_array)
+# score = tf.nn.softmax(predictions[0])
+#
+# print(
+#     "This image most likely belongs to {} with a {:.2f} percent confidence."
+#     .format(class_names[np.argmax(score)], 100 * np.max(score))
+# )
 
 img = tf.keras.utils.load_img(
-    sunflower_path, target_size=(img_height, img_width)
+    basketball_path, target_size=(img_height, img_width)
+)
+img_array = tf.keras.utils.img_to_array(img)
+img_array = tf.expand_dims(img_array, 0) # Create a batch
+
+predictions = model.predict(img_array)
+score = tf.nn.softmax(predictions[0])
+
+print(
+    "This image most likely belongs to {} with a {:.2f} percent confidence."
+    .format(class_names[np.argmax(score)], 100 * np.max(score))
+)
+
+img = tf.keras.utils.load_img(
+    soccerball_path, target_size=(img_height, img_width)
 )
 img_array = tf.keras.utils.img_to_array(img)
 img_array = tf.expand_dims(img_array, 0) # Create a batch
