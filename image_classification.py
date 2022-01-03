@@ -39,31 +39,29 @@ PIL.Image.open(str(basketballs[0]))
 #
 # PIL.Image.open(str(roses[1]))
 
-#%%
+
 
 # Load data using a Keras utility
 
 # Let's load these images off disk using the helpful `tf.keras.utils.image_dataset_from_directory` utility. This will take you from a directory of images on disk to a `tf.data.Dataset` in just a couple lines of code. If you like, you can also write your own data loading code from scratch by visiting the [Load and preprocess images](../load_data/images.ipynb) tutorial.
 
-#%% md
 
 ## Create a dataset
 
-#%% md
+
 
 # Define some parameters for the loader:
 
-#%%
+
 
 batch_size = 32
 img_height = 180
 img_width = 180
 
-#%% md
 
 # It's good practice to use a validation split when developing your model. Let's use 80% of the images for training, and 20% for validation.
 
-#%%
+
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
   data_dir,
@@ -73,7 +71,7 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
   image_size=(img_height, img_width),
   batch_size=batch_size)
 
-#%%
+
 
 val_ds = tf.keras.utils.image_dataset_from_directory(
   data_dir,
@@ -90,13 +88,11 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
 class_names = train_ds.class_names
 print(class_names)
 
-#%% md
-
 ## Visualize the data
 
 # Here are the first nine images from the training dataset:
 
-#%%
+
 
 import matplotlib.pyplot as plt
 
@@ -110,11 +106,10 @@ for images, labels in train_ds.take(1):
 
 plt.show()
 
-#%% md
 
 # You will train a model using these datasets by passing them to `Model.fit` in a moment. If you like, you can also manually iterate over the dataset and retrieve batches of images:
 
-#%%
+
 
 for image_batch, labels_batch in train_ds:
   print(image_batch.shape)
@@ -137,14 +132,14 @@ for image_batch, labels_batch in train_ds:
 
 # Interested readers can learn more about both methods, as well as how to cache data to disk in the *Prefetching* section of the [Better performance with the tf.data API](../../guide/data_performance.ipynb) guide.
 
-#%%
+
 
 AUTOTUNE = tf.data.AUTOTUNE
 
 train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
 val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
-#%% md
+
 
 ## Standardize the data
 
@@ -153,7 +148,7 @@ val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
 # Here, you will standardize values to be in the `[0, 1]` range by using `tf.keras.layers.Rescaling`:
 
-#%%
+
 
 normalization_layer = layers.Rescaling(1./255)
 
@@ -204,8 +199,6 @@ model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-#%% md
-
 ## Model summary
 
 # View all the layers of the network using the model's `Model.summary` method:
@@ -216,7 +209,7 @@ model.summary()
 
 ## Train the model
 
-#%%
+
 
 epochs=10
 history = model.fit(
@@ -231,7 +224,7 @@ history = model.fit(
 
 # Create plots of loss and accuracy on the training and validation sets:
 
-#%%
+
 
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
@@ -293,7 +286,7 @@ data_augmentation = keras.Sequential(
 
 # Let's visualize what a few augmented examples look like by applying data augmentation to the same image several times:
 
-#%%
+
 
 plt.figure(figsize=(10, 10))
 for images, _ in train_ds.take(1):
@@ -305,11 +298,9 @@ for images, _ in train_ds.take(1):
 
 plt.show()
 
-#%% md
 
 # You will use data augmentation to train a model in a moment.
 
-#%% md
 
 ## Dropout
 
@@ -319,7 +310,7 @@ plt.show()
 
 # Let's create a new neural network with `tf.keras.layers.Dropout` before training it using the augmented images:
 
-#%%
+
 
 model = Sequential([
   data_augmentation,
@@ -336,21 +327,19 @@ model = Sequential([
   layers.Dense(num_classes)
 ])
 
-#%% md
-
 ## Compile and train the model
 
-#%%
+
 
 model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-#%%
+
 
 model.summary()
 
-#%%
+
 
 epochs = 15
 history = model.fit(
@@ -359,13 +348,12 @@ history = model.fit(
   epochs=epochs
 )
 
-#%% md
 
 ## Visualize training results
 
 # After applying data augmentation and `tf.keras.layers.Dropout`, there is less overfitting than before, and training and validation accuracy are closer aligned:
 
-#%%
+
 
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
@@ -389,15 +377,10 @@ plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
 plt.show()
 
-#%% md
 
 ## Predict on new data
 
-#%% md
-
 # Finally, let's use our model to classify an image that wasn't included in the training or validation sets.
-
-#%% md
 
 # Note: Data augmentation and dropout layers are inactive at inference time.
 
