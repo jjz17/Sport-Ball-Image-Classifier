@@ -30,22 +30,22 @@ print(f'# of soccerballs: {soccer_count}')
 basketballs = list(data_dir.glob('basketball/*'))
 PIL.Image.open(str(basketballs[0]))
 
-# Load data using a Keras utility
+'''
+Load data using a Keras utility
 
-# Let's load these images off disk using the helpful `tf.keras.utils.image_dataset_from_directory` utility. This will take you from a directory of images on disk to a `tf.data.Dataset` in just a couple lines of code. If you like, you can also write your own data loading code from scratch by visiting the [Load and preprocess images](../load_data/images.ipynb) tutorial.
+Let's load these images off disk using the helpful `tf.keras.utils.image_dataset_from_directory` utility. This will take you from a directory of images on disk to a `tf.data.Dataset` in just a couple lines of code. If you like, you can also write your own data loading code from scratch by visiting the [Load and preprocess images](../load_data/images.ipynb) tutorial.
 
+Create a dataset
 
-## Create a dataset
-
-
-# Define some parameters for the loader:
-
+Define some parameters for the loader:
+'''
 
 batch_size = 32
 img_height = 180
 img_width = 180
 
-# It's good practice to use a validation split when developing your model. Let's use 80% of the images for training, and 20% for validation.
+# It's good practice to use a validation split when developing your model.
+# Let's use 80% of the images for training, and 20% for validation.
 
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
@@ -64,13 +64,14 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
     image_size=(img_height, img_width),
     batch_size=batch_size)
 
-# You can find the class names in the `class_names` attribute on these datasets. These correspond to the directory names in alphabetical order.
+# You can find the class names in the `class_names` attribute on these datasets.
+# These correspond to the directory names in alphabetical order.
 
 
 class_names = train_ds.class_names
 print(class_names)
 
-## Visualize the data
+# Visualize the data
 
 # Here are the first nine images from the training dataset:
 
@@ -87,7 +88,8 @@ for images, labels in train_ds.take(1):
 
 plt.show()
 
-# You will train a model using these datasets by passing them to `Model.fit` in a moment. If you like, you can also manually iterate over the dataset and retrieve batches of images:
+# You will train a model using these datasets by passing them to `Model.fit` in a moment.
+# If you like, you can also manually iterate over the dataset and retrieve batches of images:
 
 
 for image_batch, labels_batch in train_ds:
@@ -95,19 +97,26 @@ for image_batch, labels_batch in train_ds:
     print(labels_batch.shape)
     break
 
-# The `image_batch` is a tensor of the shape `(32, 180, 180, 3)`. This is a batch of 32 images of shape `180x180x3` (the last dimension refers to color channels RGB). The `label_batch` is a tensor of the shape `(32,)`, these are corresponding labels to the 32 images.
+# The `image_batch` is a tensor of the shape `(32, 180, 180, 3)`.
+# This is a batch of 32 images of shape `180x180x3` (the last dimension refers to color channels RGB).
+# The `label_batch` is a tensor of the shape `(32,)`, these are corresponding labels to the 32 images.
 
-# You can call `.numpy()` on the `image_batch` and `labels_batch` tensors to convert them to a `numpy.ndarray`.
+# You can call `.numpy()` on the `image_batch` and `labels_batch` tensors to convert them
+# to a `numpy.ndarray`.
 
 
-## Configure the dataset for performance
+# Configure the dataset for performance
 
-# Let's make sure to use buffered prefetching so you can yield data from disk without having I/O become blocking. These are two important methods you should use when loading data:
+# Let's make sure to use buffered prefetching so you can yield data from disk without
+# having I/O become blocking. These are two important methods you should use when loading data:
 
-# - `Dataset.cache` keeps the images in memory after they're loaded off disk during the first epoch. This will ensure the dataset does not become a bottleneck while training your model. If your dataset is too large to fit into memory, you can also use this method to create a performant on-disk cache.
+# - `Dataset.cache` keeps the images in memory after they're loaded off disk during the first epoch.
+# This will ensure the dataset does not become a bottleneck while training your model.
+# If your dataset is too large to fit into memory, you can also use this method to create a performant on-disk cache.
 # - `Dataset.prefetch` overlaps data preprocessing and model execution while training.
 
-# Interested readers can learn more about both methods, as well as how to cache data to disk in the *Prefetching* section of the [Better performance with the tf.data API](../../guide/data_performance.ipynb) guide.
+# Interested readers can learn more about both methods, as well as how to cache data to disk in
+# the *Prefetching* section of the [Better performance with the tf.data API](../../guide/data_performance.ipynb) guide.
 
 
 AUTOTUNE = tf.data.AUTOTUNE
@@ -115,10 +124,10 @@ AUTOTUNE = tf.data.AUTOTUNE
 train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
 val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
-## Standardize the data
+# Standardize the data
 
-
-# The RGB channel values are in the `[0, 255]` range. This is not ideal for a neural network; in general you should seek to make your input values small.
+# The RGB channel values are in the `[0, 255]` range. This is not ideal for a neural network;
+# in general you should seek to make your input values small.
 
 # Here, you will standardize values to be in the `[0, 1]` range by using `tf.keras.layers.Rescaling`:
 
@@ -134,15 +143,21 @@ first_image = image_batch[0]
 # Notice the pixel values are now in `[0,1]`.
 print(np.min(first_image), np.max(first_image))
 
-# Or, you can include the layer inside your model definition, which can simplify deployment. Let's use the second approach here.
+# Or, you can include the layer inside your model definition, which can simplify deployment.
+# Let's use the second approach here.
 
 
-# Note: You previously resized images using the `image_size` argument of `tf.keras.utils.image_dataset_from_directory`. If you want to include the resizing logic in your model as well, you can use the `tf.keras.layers.Resizing` layer.
+# Note: You previously resized images using the `image_size` argument of `tf.keras.utils.image_dataset_from_directory`.
+# If you want to include the resizing logic in your model as well, you can use the `tf.keras.layers.Resizing` layer.
 
 
 # Create the model
 
-# The [Sequential](https://www.tensorflow.org/guide/keras/sequential_model) model consists of three convolution blocks (`tf.keras.layers.Conv2D`) with a max pooling layer (`tf.keras.layers.MaxPooling2D`) in each of them. There's a fully-connected layer (`tf.keras.layers.Dense`) with 128 units on top of it that is activated by a ReLU activation function (`'relu'`). This model has not been tuned for high accuracy—the goal of this tutorial is to show a standard approach.
+# The [Sequential](https://www.tensorflow.org/guide/keras/sequential_model) model consists of
+# three convolution blocks (`tf.keras.layers.Conv2D`) with a max pooling layer (`tf.keras.layers.MaxPooling2D`)
+# in each of them. There's a fully-connected layer (`tf.keras.layers.Dense`) with 128 units on top of it that
+# is activated by a ReLU activation function (`'relu'`). This model has not been tuned for high accuracy—the
+# goal of this tutorial is to show a standard approach.
 
 
 num_classes = len(class_names)
@@ -160,23 +175,25 @@ model = Sequential([
     layers.Dense(num_classes)
 ])
 
-## Compile the model
+# Compile the model
 
-# For this tutorial, choose the `tf.keras.optimizers.Adam` optimizer and `tf.keras.losses.SparseCategoricalCrossentropy` loss function. To view training and validation accuracy for each training epoch, pass the `metrics` argument to `Model.compile`.
+# For this tutorial, choose the `tf.keras.optimizers.Adam` optimizer and `tf.keras.losses.SparseCategoricalCrossentropy`
+# loss function. To view training and validation accuracy for each training epoch, pass the `metrics` argument to
+# `Model.compile`.
 
 
 model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-## Model summary
+# Model summary
 
 # View all the layers of the network using the model's `Model.summary` method:
 
 
 model.summary()
 
-## Train the model
+# Train the model
 
 
 epochs = 10
@@ -214,7 +231,8 @@ plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
 plt.show()
 
-# The plots show that training accuracy and validation accuracy are off by large margins, and the model has achieved only around 60% accuracy on the validation set.
+# The plots show that training accuracy and validation accuracy are off by large margins, and the model has
+# achieved only around 60% accuracy on the validation set.
 
 # Let's inspect what went wrong and try to increase the overall performance of the model.
 
@@ -223,18 +241,30 @@ plt.show()
 ## Overfitting
 
 
-# In the plots above, the training accuracy is increasing linearly over time, whereas validation accuracy stalls around 60% in the training process. Also, the difference in accuracy between training and validation accuracy is noticeable—a sign of [overfitting](https://www.tensorflow.org/tutorials/keras/overfit_and_underfit).
+# In the plots above, the training accuracy is increasing linearly over time, whereas validation accuracy stalls
+# around 60% in the training process. Also, the difference in accuracy between training and validation accuracy
+# is noticeable—a sign of [overfitting](https://www.tensorflow.org/tutorials/keras/overfit_and_underfit).
 
-# When there are a small number of training examples, the model sometimes learns from noises or unwanted details from training examples—to an extent that it negatively impacts the performance of the model on new examples. This phenomenon is known as overfitting. It means that the model will have a difficult time generalizing on a new dataset.
+# When there are a small number of training examples, the model sometimes learns from noises or unwanted details
+# from training examples—to an extent that it negatively impacts the performance of the model on new examples.
+# This phenomenon is known as overfitting. It means that the model will have a difficult time generalizing on a
+# new dataset.
 
-# There are multiple ways to fight overfitting in the training process. In this tutorial, you'll use *data augmentation* and add *Dropout* to your model.
+# There are multiple ways to fight overfitting in the training process. In this tutorial, you'll use *data
+# augmentation* and add *Dropout* to your model.
 
-## Data augmentation
+#
+# Data augmentation
 
 
-# Overfitting generally occurs when there are a small number of training examples. [Data augmentation](./data_augmentation.ipynb) takes the approach of generating additional training data from your existing examples by augmenting them using random transformations that yield believable-looking images. This helps expose the model to more aspects of the data and generalize better.
+# Overfitting generally occurs when there are a small number of training examples.
+# [Data augmentation](./data_augmentation.ipynb) takes the approach of generating additional training data
+# from your existing examples by augmenting them using random transformations that yield believable-looking
+# images. This helps expose the model to more aspects of the data and generalize better.
 
-# You will implement data augmentation using the following Keras preprocessing layers: `tf.keras.layers.RandomFlip`, `tf.keras.layers.RandomRotation`, and `tf.keras.layers.RandomZoom`. These can be included inside your model like other layers, and run on the GPU.
+# You will implement data augmentation using the following Keras preprocessing layers: `tf.keras.layers.RandomFlip`,
+# `tf.keras.layers.RandomRotation`, and `tf.keras.layers.RandomZoom`. These can be included inside your model like
+# other layers, and run on the GPU.
 
 
 data_augmentation = keras.Sequential(
@@ -264,11 +294,16 @@ plt.show()
 # You will use data augmentation to train a model in a moment.
 
 
-## Dropout
+# Dropout
 
-# Another technique to reduce overfitting is to introduce [dropout](https://developers.google.com/machine-learning/glossary#dropout_regularization) regularization to the network.
+# Another technique to reduce overfitting is to introduce
+# [dropout](https://developers.google.com/machine-learning/glossary#dropout_regularization) regularization to the
+# network.
 
-# When you apply dropout to a layer, it randomly drops out (by setting the activation to zero) a number of output units from the layer during the training process. Dropout takes a fractional number as its input value, in the form such as 0.1, 0.2, 0.4, etc. This means dropping out 10%, 20% or 40% of the output units randomly from the applied layer.
+# When you apply dropout to a layer, it randomly drops out (by setting the activation to zero) a number of output
+# units from the layer during the training process. Dropout takes a fractional number as its input value, in the
+# form such as 0.1, 0.2, 0.4, etc. This means dropping out 10%, 20% or 40% of the output units randomly from the
+# applied layer.
 
 # Let's create a new neural network with `tf.keras.layers.Dropout` before training it using the augmented images:
 
@@ -288,7 +323,7 @@ model = Sequential([
     layers.Dense(num_classes)
 ])
 
-## Compile and train the model
+# Compile and train the model
 
 
 model.compile(optimizer='adam',
@@ -304,9 +339,10 @@ history = model.fit(
     epochs=epochs
 )
 
-## Visualize training results
+# Visualize training results
 
-# After applying data augmentation and `tf.keras.layers.Dropout`, there is less overfitting than before, and training and validation accuracy are closer aligned:
+# After applying data augmentation and `tf.keras.layers.Dropout`, there is less overfitting than before, and
+# training and validation accuracy are closer aligned:
 
 
 acc = history.history['accuracy']
@@ -331,7 +367,7 @@ plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
 plt.show()
 
-## Predict on new data
+# Predict on new data
 
 # Finally, let's use our model to classify an image that wasn't included in the training or validation sets.
 
