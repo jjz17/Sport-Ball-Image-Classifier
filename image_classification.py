@@ -1,6 +1,7 @@
 import pathlib
 
 import PIL
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -16,7 +17,7 @@ data_dir = pathlib.Path('/Users/jasonzhang/.keras/datasets/sport_ball_images')
 # data_dir = tf.keras.utils.get_file('flower_photos', origin=dataset_url, untar=True)
 # data_dir = pathlib.Path(data_dir)
 
-print(type(data_dir))
+# print(type(data_dir))
 
 image_count = len(list(data_dir.glob('*/*.jpg')))
 print(f'# of images: {image_count}')
@@ -69,14 +70,11 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
 
 
 class_names = train_ds.class_names
-print(class_names)
+print(f'Classes: {class_names}')
 
 # Visualize the data
 
 # Here are the first nine images from the training dataset:
-
-
-import matplotlib.pyplot as plt
 
 plt.figure(figsize=(10, 10))
 for images, labels in train_ds.take(1):
@@ -231,14 +229,17 @@ plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
 plt.show()
 
+# The plots show that training accuracy and validation accuracy are very close, and the model has
+# achieved over 90% accuracy on the validation set.
+
 # The plots show that training accuracy and validation accuracy are off by large margins, and the model has
 # achieved only around 60% accuracy on the validation set.
 
 # Let's inspect what went wrong and try to increase the overall performance of the model.
 
-# %% md
+# %%
 
-## Overfitting
+# Overfitting
 
 
 # In the plots above, the training accuracy is increasing linearly over time, whereas validation accuracy stalls
@@ -425,3 +426,19 @@ print(
     "This image most likely belongs to {} with a {:.2f} percent confidence."
         .format(class_names[np.argmax(score)], 100 * np.max(score))
 )
+
+
+def predict_image(url: str, file_name: str):
+    path = tf.keras.utils.get_file(file_name, origin=url)
+    image = tf.keras.utils.load_img(
+        path, target_size=(img_height, img_width)
+    )
+    image_array = tf.keras.utils.img_to_array(image)
+    image_array = tf.expand_dims(image_array, 0)  # Create a batch
+
+    pred = model.predict(image_array)
+    prob_score = tf.nn.softmax(pred[0])
+
+    print(
+        f"This image most likely belongs to {class_names[np.argmax(prob_score)]} with a "
+        f"{100 * np.max(prob_score):.2f} percent confidence.")
