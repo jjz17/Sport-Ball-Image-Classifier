@@ -8,7 +8,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
-sport_balls_data_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/sport_ball_images.zip'
+sport_balls_data_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/data/sport_ball_images.zip'
 data_dir = tf.keras.utils.get_file('images', sport_balls_data_url, extract=True)
 # data_dir = pathlib.Path(data_dir)
 data_dir = pathlib.Path('/Users/jasonzhang/.keras/datasets/sport_ball_images')
@@ -379,10 +379,10 @@ plt.show()
 # sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
 # sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
 
-basketball_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/basketball.jpg'
+basketball_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/data/sport_ball_images/test_images/basketball.jpg'
 # basketball_path = tf.keras.utils.get_file('basketball', origin=basketball_url)
 
-soccerball_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/soccerball.jpg'
+soccerball_url = 'https://github.com/jjz17/Sport-Ball-Image-Classifier/raw/main/data/sport_ball_images/test_images/soccerball.jpg'
 # soccerball_path = tf.keras.utils.get_file('soccerball', origin=soccerball_url)
 
 # img = tf.keras.utils.load_img(
