@@ -113,43 +113,6 @@ for i in range(1, 4):
 print(url_count)
 df
 
-#     info = listing.find('div', class_='list-search-property-tile-info-container')
-#             title = info.find('a').get_text()
-#     #         print(title)
-#             price = info.find('span', class_='list-search-rent-label').get_text().strip().split()[0]
-#     #         print(price)
-#             try:
-#                 distance = info.find('div',
-#                                      class_='list-search-property-tile-distance').find('span').get_text().split()[0]
-#             except AttributeError:
-#                 distance = 100
-#     #         print(distance)
-#             url = info.find('a').get('href')
-#     #         print(url)
-#     #         print(type(info))
-#             # Create a temporary dictionary to store the information of the current post
-#             temp_dict = {"Title": title, "Price": price, 
-#                "Mins from Campus": distance, "URL": url}
-
-#             # Append the current post's information to the df DataFrame to create its respective row
-#             df = df.append(temp_dict, ignore_index=True)
-#         else:
-#             break
-
-#     # waits between 5 and 10 seconds before the next iteration to avoid being blocked by CL
-#     time.sleep(random.randint(5,10))
-
-# CLEAN UP PRICE DATA
-
-# # Remove unnecessary info
-# df['Price'] = df['Price'].map(lambda x : x[1:])
-# # Remove commas
-# df['Price'] = df['Price'].map(lambda x : x.replace(',', ''))
-# # Change Strings to ints
-# # df['Price'] = df['Price'].astype(int)
-# # df = df.sort_values(by=['Price'], ascending=False)
-# df
-
 # %%
 
 target_url = 'https://www.victeamsports.com/product-categories/soccer-balls/?product-page='

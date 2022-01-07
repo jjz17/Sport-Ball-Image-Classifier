@@ -1,7 +1,7 @@
 import os
+import random
 import time
 import urllib.request as urllib
-import random
 
 import pandas as pd
 
@@ -10,7 +10,6 @@ def url_to_jpg(index, url, file_path):
     file_name = f'image{index}.jpg'
     full_path = f'{file_path}{file_name}'
     urllib.urlretrieve(url, full_path)
-
     # print(f'{file_name} saved successfully')
 
 
@@ -28,7 +27,7 @@ def url_to_jpg(index, url, file_path):
 #     except OSError:
 #         pass
 
-df = pd.read_csv('image_urls.csv')
+df = pd.read_csv('../data/image_urls.csv')
 
 # print(df.head())
 
@@ -43,11 +42,9 @@ for i in df.index:
     else:
         file_path = f'sport_ball_images{os.path.sep}soccer{os.path.sep}'
     try:
-        url_to_jpg(i+1, url, file_path)
-        print(f'Saving image {i+1}')
+        url_to_jpg(i + 1, url, file_path)
+        print(f'Saving image {i + 1}')
         time.sleep(random.randint(2, 5))
     except:
         pass
     # print(f'{label} {url}')
-
-# url_to_jpg(1, 'https://www.victeamsports.com/wp-content/uploads/2019/01/Customize-Your-Own-Soccer-Footballs-500x500.jpg', 'sport_ball_images/soccer/')
