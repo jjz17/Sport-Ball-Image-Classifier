@@ -145,4 +145,4 @@ df
 info = df.groupby('Brand').describe()
 
 # %%
-df.to_csv('image_urls.csv', index=False)
+df.to_csv(f'..{os.path.sep}data{os.path.sep}image_urls.csv', index=False)
